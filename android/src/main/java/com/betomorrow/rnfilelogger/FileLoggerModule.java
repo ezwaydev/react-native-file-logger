@@ -39,7 +39,7 @@ public class FileLoggerModule extends ReactContextBaseJavaModule {
     private static final int LOG_LEVEL_WARNING = 2;
     private static final int LOG_LEVEL_ERROR = 3;
 
-    private static Logger logger = LoggerFactory.getLogger(FileLoggerModule.class);
+    private static ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(FileLoggerModule.class);
 
     private final ReactApplicationContext reactContext;
     private String logsDirectory;
@@ -112,9 +112,12 @@ public class FileLoggerModule extends ReactContextBaseJavaModule {
 
         ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         root.setLevel(Level.DEBUG);
-        // do not cleanup other loggers - BackgroundGeolocation.Logger might be there
         // root.detachAndStopAllAppenders();
-        root.addAppender(rollingFileAppender);
+        // root.addAppender(rollingFileAppender);
+        
+        // we add appender directly to used logger, and disable propagating up the logger chain
+        logger.setAdditive(false);
+        logger.addAppender(rollingFileAppender);
 
         configureOptions = options;
         promise.resolve(null);
