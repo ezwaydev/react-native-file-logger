@@ -15,6 +15,17 @@ enum LogLevel {
 
 static const DDLogLevel ddLogLevel = DDLogLevelDebug;
 
+// try to use specific log context 
+#define FL_LOG_CONTEXT 8765
+
+#define FLLogError(frmt, ...)   LOG_MAYBE(NO,                ddLogLevel, DDLogFlagError,   FL_LOG_CONTEXT, nil, __PRETTY_FUNCTION__, frmt, ##__VA_ARGS__)
+#define FLLogWarn(frmt, ...)    LOG_MAYBE(LOG_ASYNC_ENABLED, ddLogLevel, DDLogFlagWarning, FL_LOG_CONTEXT, nil, __PRETTY_FUNCTION__, frmt, ##__VA_ARGS__)
+#define FLLogInfo(frmt, ...)    LOG_MAYBE(LOG_ASYNC_ENABLED, ddLogLevel, DDLogFlagInfo,    FL_LOG_CONTEXT, nil, __PRETTY_FUNCTION__, frmt, ##__VA_ARGS__)
+#define FLLogDebug(frmt, ...)   LOG_MAYBE(LOG_ASYNC_ENABLED, ddLogLevel, DDLogFlagDebug,   FL_LOG_CONTEXT, nil, __PRETTY_FUNCTION__, frmt, ##__VA_ARGS__)
+#define FLLogVerbose(frmt, ...) LOG_MAYBE(LOG_ASYNC_ENABLED, ddLogLevel, DDLogFlagVerbose, FL_LOG_CONTEXT, nil, __PRETTY_FUNCTION__, frmt, ##__VA_ARGS__)
+
+/* ----------------------------------------------- */
+
 @interface FileLogger () <MFMailComposeViewControllerDelegate>
 @property (nonatomic, strong) DDFileLogger* fileLogger;
 @end
@@ -54,16 +65,20 @@ RCT_EXPORT_METHOD(configure:(NSDictionary*)options resolver:(RCTPromiseResolveBl
 RCT_EXPORT_METHOD(write:(NSNumber* _Nonnull)level str:(NSString*)str) {
     switch (level.integerValue) {
         case LOG_LEVEL_DEBUG:
-            DDLogDebug(@"%@", str);
+            //DDLogDebug(@"%@", str);
+            FLLogDebug(@"%@", str);
             break;
         case LOG_LEVEL_INFO:
-            DDLogInfo(@"%@", str);
+            //DDLogInfo(@"%@", str);
+            FLLogInfo(@"%@", str);
             break;
         case LOG_LEVEL_WARNING:
-            DDLogWarn(@"%@", str);
+            //DDLogWarn(@"%@", str);
+            FLLogWarn(@"%@", str);
             break;
         case LOG_LEVEL_ERROR:
-            DDLogError(@"%@", str);
+            //DDLogError(@"%@", str);
+            FLLogError(@"%@", str);
             break;
     }
 }
